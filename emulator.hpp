@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -14,11 +15,22 @@ public:
   using Word = int32_t;
 
 private:
-  struct EmulatorState {
-    static constexpr size_t regs_size = 4;
-    static constexpr size_t ram_size = 1024;
-    Word regs[regs_size];
-    Word ram[ram_size];
+  enum class Register : int { R0 = 0, R1 = 1, R2 = 2, R3 = 3 };
+
+  class EmulatorState {
+    template <int size>
+    class Registers {
+      Word arr_[size];
+
+    public:
+      Word& operator[](const Register& reg) {
+        return arr_[std::to_underlying(reg)];
+      }
+    };
+
+  public:
+    Registers<4> regs;
+    std::array<Word, 1024> ram;
     size_t pc = 0;
   };
 
@@ -27,8 +39,6 @@ private:
     virtual void eval(EmulatorState& st) = 0;
     virtual ~Instruction() {};
   };
-
-  enum Register { R0, R1, R2, R3 };
 
   struct RR {
     Register rd, rs;
