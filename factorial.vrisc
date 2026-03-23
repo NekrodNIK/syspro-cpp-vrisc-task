@@ -1,6 +1,6 @@
 Mov R0 5
 Mov R1 1    
-Mov Jmpz 6  
+Jmpz 6  
               
 Mul R1 R0   
 Sub R0 1    
